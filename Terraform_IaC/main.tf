@@ -12,7 +12,7 @@ resource "aws_instance" "web" {
   tags = {
     Name = "Minsait_${count.index}"
   }
- 
+
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
