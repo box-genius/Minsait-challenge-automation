@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "us-east-1"  # Altere para a região desejada
-}
-
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
   public_key = file("ssh_keys/deployer-key.pub")
@@ -27,7 +23,7 @@ resource "aws_instance" "web" {
       "sudo apt-get install -y docker-ce",
       "sudo systemctl enable docker",
       "sudo systemctl start docker",
-      "docker --version"  # Verifica se o Docker foi instalado
+      "docker --version"
     ]
 
     connection {
@@ -37,7 +33,7 @@ resource "aws_instance" "web" {
       host        = self.public_ip
     }
 
-    on_failure = "continue"  # Continua mesmo que ocorra um erro na instalação
+    on_failure = "continue"
   }
 
   provisioner "local-exec" {
