@@ -35,5 +35,5 @@ variable "key_name" {
 
 variable "private_key_path" {
   description = "The path to the private key file"
-  default     = "Minsait_key_private"
+  default     = "./Minsait_key.pem"
 }
