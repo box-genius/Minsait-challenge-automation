@@ -2,7 +2,6 @@ resource "aws_instance" "web" {
   count         = 10
   ami           = var.ami_id
   instance_type = var.instance_type
-  key_name      = var.key_name
 
   tags = {
     Name = "Minsait_${count.index}"
@@ -20,23 +19,4 @@ resource "aws_instance" "web" {
               sudo systemctl enable docker
               sudo systemctl start docker
               EOF
-}
-
-resource "null_resource" "check_docker" {
-  count = 10
-
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file(var.private_key_path)
-      host        = aws_instance.web[count.index].public_ip
-    }
-
-    inline = [
-      "docker --version"
-    ]
-  }
-
-  depends_on = [aws_instance.web]
 }
