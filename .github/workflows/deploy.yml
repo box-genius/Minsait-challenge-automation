@@ -1,4 +1,4 @@
-name: Teste automação terraform e AWS Minsait
+name: projeto automatizado completo etapa 3 cicd deploy aplicacao
 
 on:
   push:
