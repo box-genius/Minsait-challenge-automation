@@ -38,8 +38,8 @@ jobs:
       - name: Obter IDs e IPs Públicos das Instâncias
         id: get_instance_info
         run: |
-          instance_ids=$(terraform output -json instance_ids | jq -r '. | join(",")')
-          instance_public_ips=$(terraform output -json instance_public_ips | jq -r '. | join(",")')
+          instance_ids=$(terraform output -json instance_ids | jq -r '.[] | join(",")')
+          instance_public_ips=$(terraform output -json instance_public_ips | jq -r '.[] | join(",")')
           echo "instance_ids=$instance_ids" >> $GITHUB_ENV
           echo "instance_public_ips=$instance_public_ips" >> $GITHUB_ENV
         working-directory: Terraform_IaC
