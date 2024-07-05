@@ -1,4 +1,4 @@
-name: Verificar Instalação do Docker
+name: projeto automatizado completo etapa 3 cicd deploy aplicacao
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  verify_docker:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Fazer checkout do repositório
@@ -48,13 +48,6 @@ jobs:
         run: |
           echo "Instance IDs: ${{ env.instance_ids }}"
           echo "Instance Public IPs: ${{ env.instance_public_ips }}"
-
-      - name: Verificar Instalação do Docker
-        run: |
-          for ip in $(echo ${{ env.instance_public_ips }} | tr "," "\n"); do
-            echo "Verificando Docker na instância $ip"
-            ssh -o StrictHostKeyChecking=no -i /path/to/your/private/key ubuntu@$ip "docker --version"
-          done
 
       # - name: Destruir Terraform
       #   env:
