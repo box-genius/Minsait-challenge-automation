@@ -38,8 +38,8 @@ jobs:
       - name: Obter IDs e IPs Públicos das Instâncias
         id: get_instance_info
         run: |
-          instance_ids=$(terraform output -json instance_ids)
-          instance_public_ips=$(terraform output -json instance_public_ips)
+          instance_ids=$(terraform output -json instance_ids | jq -r '.value[]')
+          instance_public_ips=$(terraform output -json instance_public_ips | jq -r '.value[]')
           private_key=$(terraform output -raw private_key)
           echo "instance_ids=$instance_ids" >> $GITHUB_ENV
           echo "instance_public_ips=$instance_public_ips" >> $GITHUB_ENV
@@ -49,7 +49,7 @@ jobs:
 
       - name: Instalar Docker nas Instâncias
         run: |
-          for ip in $(echo ${{ env.instance_public_ips }} | jq -r '.[]'); do
+          for ip in ${{ env.instance_public_ips }}; do
             ssh -o "StrictHostKeyChecking=no" -i /home/runner/.ssh/id_rsa ubuntu@$ip "sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - && sudo add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable' && sudo apt-get update && sudo apt-get install -y docker-ce && sudo usermod -aG docker ubuntu && sudo systemctl enable docker && sudo systemctl start docker && docker --version && echo Docker instalado em $ip || echo Docker não instalado em $ip"
           done
 
