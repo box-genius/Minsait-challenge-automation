@@ -38,11 +38,16 @@ jobs:
       - name: Obter IDs e IPs Públicos das Instâncias
         id: get_instance_info
         run: |
-          instance_ids=$(terraform output -json instance_ids | jq -r '.[] | join(",")')
-          instance_public_ips=$(terraform output -json instance_public_ips | jq -r '.[] | join(",")')
+          instance_ids=$(terraform output -raw instance_ids)
+          instance_public_ips=$(terraform output -raw instance_public_ips)
           echo "instance_ids=$instance_ids" >> $GITHUB_ENV
           echo "instance_public_ips=$instance_public_ips" >> $GITHUB_ENV
         working-directory: Terraform_IaC
+
+      - name: Mostrar IDs e IPs Públicos das Instâncias
+        run: |
+          echo "Instance IDs: ${{ env.instance_ids }}"
+          echo "Instance Public IPs: ${{ env.instance_public_ips }}"
 
       - name: Verificar Instalação do Docker
         run: |
@@ -51,9 +56,9 @@ jobs:
             ssh -o StrictHostKeyChecking=no -i /path/to/your/private/key ubuntu@$ip "docker --version"
           done
 
-      - name: Destruir Terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: terraform destroy -auto-approve -var "aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var "aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-        working-directory: Terraform_IaC
+      # - name: Destruir Terraform
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #   run: terraform destroy -auto-approve -var "aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var "aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+      #   working-directory: Terraform_IaC
