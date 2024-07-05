@@ -1,4 +1,4 @@
-name: projeto automatizado completo etapa 3 cicd deploy aplicacao
+name: Verificar Instalação do Docker
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  verify_docker:
     runs-on: ubuntu-latest
     steps:
       - name: Fazer checkout do repositório
@@ -44,14 +44,16 @@ jobs:
           echo "instance_public_ips=$instance_public_ips" >> $GITHUB_ENV
         working-directory: Terraform_IaC
 
-      - name: Mostrar IDs e IPs Públicos das Instâncias
+      - name: Verificar Instalação do Docker
         run: |
-          echo "Instance IDs: ${{ env.instance_ids }}"
-          echo "Instance Public IPs: ${{ env.instance_public_ips }}"
+          for ip in $(echo ${{ env.instance_public_ips }} | tr "," "\n"); do
+            echo "Verificando Docker na instância $ip"
+            ssh -o StrictHostKeyChecking=no -i /path/to/your/private/key ubuntu@$ip "docker --version"
+          done
 
-      # - name: Destruir Terraform
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #   run: terraform destroy -auto-approve -var "aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var "aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-      #   working-directory: Terraform_IaC
+      - name: Destruir Terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: terraform destroy -auto-approve -var "aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var "aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        working-directory: Terraform_IaC
