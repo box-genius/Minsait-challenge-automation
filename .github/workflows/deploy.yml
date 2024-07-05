@@ -1,4 +1,4 @@
-name: projeto automatizado completo etapa 3 cicd deploy aplicacao
+name: Minsait-challenge-automation
 
 on:
   push:
