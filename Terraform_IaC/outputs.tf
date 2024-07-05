@@ -1,12 +1,9 @@
-output "instance_public_ips" {
-  value = [for instance in aws_instance.web : instance.public_ip]
-}
-
 output "instance_ids" {
-  value = [for instance in aws_instance.web : instance.id]
+  description = "IDs das instâncias criadas"
+  value       = aws_instance.web[*].id
 }
 
-output "private_key" {
-  value     = tls_private_key.example.private_key_pem
-  sensitive = true
+output "instance_public_ips" {
+  description = "Endereços IP públicos das instâncias"
+  value       = aws_instance.web[*].public_ip
 }
