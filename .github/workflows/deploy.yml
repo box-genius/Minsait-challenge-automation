@@ -47,11 +47,6 @@ jobs:
           chmod 600 /home/runner/.ssh/id_rsa
         working-directory: Terraform_IaC
 
-      - name: Mostrar IDs e IPs Públicos das Instâncias
-        run: |
-          echo "Instance IDs: ${{ env.instance_ids }}"
-          echo "Instance Public IPs: ${{ env.instance_public_ips }}"
-
       - name: Instalar Docker nas Instâncias
         run: |
           for ip in $(echo ${{ env.instance_public_ips }} | jq -r '.[]'); do
