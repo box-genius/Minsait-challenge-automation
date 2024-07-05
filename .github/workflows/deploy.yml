@@ -35,18 +35,6 @@ jobs:
         run: terraform apply -auto-approve -var "aws_access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -var "aws_secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         working-directory: Terraform_IaC
 
-      - name: Obter IDs e IPs Públicos das Instâncias
-        id: get_instance_info
-        run: |
-          instance_ids=$(terraform output -json instance_ids | jq -r '.value[]')
-          instance_public_ips=$(terraform output -json instance_public_ips | jq -r '.value[]')
-          private_key=$(terraform output -raw private_key)
-          echo "instance_ids=$instance_ids" >> $GITHUB_ENV
-          echo "instance_public_ips=$instance_public_ips" >> $GITHUB_ENV
-          echo "$private_key" > /home/runner/.ssh/id_rsa
-          chmod 600 /home/runner/.ssh/id_rsa
-        working-directory: Terraform_IaC
-
       - name: Instalar Docker nas Instâncias
         run: |
           for ip in ${{ env.instance_public_ips }}; do
